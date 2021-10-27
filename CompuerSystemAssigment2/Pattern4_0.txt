@@ -1,0 +1,42 @@
+//This program will display a hard coded pattern
+
+		MOV 1 -> R1			//storing 1 for later
+		MOV inner -> RB			//storing inner loop for printing one line
+		MOV [start_cell] -> RC		//load start of display memory
+
+//I=0
+//J=0
+next_pattern: 	MOV 0 -> RA 			//storing offset for pattern
+start_line:	MOV 0 -> R4			//storing offset for line
+		MOV line_data -> RF		//load start of array
+		ADDI RA, RF -> RF		//add index
+		MOV [RF] -> RD			//load pattern
+
+//loop while I < patterns_on_line
+inner:		MOV RD -> [RC]			//write to display
+//check if at end of memory
+		MOV [end_cell] -> R0		//load end of display memory
+		JMPEQ quit, RC			//if at end of memory stop running
+//increment I
+		ADDI R1, RC -> RC		//increasing the pointer
+		ADDI R1, R4 -> R4		//count number of printed patterns on line
+		MOV [patterns_on_line] -> R0	//load max number of patterns on line
+		JMPLT RB, R4			//print again same pattern
+//increment J
+		ADDI R1, RA -> RA		//move pointer to next pattern
+		MOV 5 -> R0			//load last pattern number
+		JMPEQ next_pattern, RA		//if last pattern reset to first
+		JMP start_line			//loop same pattern
+quit: 		HALT				//stop program
+
+start_cell:		DATA	80
+end_cell:		DATA	FF	
+patterns_on_line:	DATA	8
+
+//line_1:		DATA	00010000	//byte
+//line_2:		DATA	00101000	//byte
+//line_3:		DATA	01010100	//byte
+//line_4:		DATA	10101010	//byte
+
+line_data:		DATA	00010000,	00101000,	01010100,	10101010,	00000000,	
+//				0		1		2		3		4
